@@ -1,0 +1,56 @@
+package us.lazerzes.citysim.test;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+import us.lazerzes.citysim.driver.Driver;
+import us.lazerzes.citysim.location.*;
+
+public class CitySimTest {
+
+	@Test
+	public void testCoffee(){
+		
+		Driver d = new Driver(1);
+		d.setCurrentLocation(new LocationBuilding(1, 1, "Coffee"));
+		
+		d.checkCurrentPosition();
+		
+		assertEquals(d.getCoffeeCount(), 1);
+		
+	}
+	
+	@Test
+	public void testNotCoffee(){
+		
+		Driver d = new Driver(1);
+		d.setCurrentLocation(new LocationBuilding(1, 1, "Library"));
+		
+		d.checkCurrentPosition();
+		
+		assertEquals(d.getCoffeeCount(), 0);
+		
+	}
+	
+	@Test
+	public void testInCityLocation(){
+		Driver d = new Driver(1);
+		d.setCurrentLocation(new LocationBuilding(1, 1, "Coffee"));
+		
+		assertTrue(d.checkCurrentPosition());
+		
+	}
+	
+	@Test
+	public void testOutCityLocation(){
+		Driver d = new Driver(1);
+		d.setCurrentLocation(new LocationCityLimits(1, 1, "Burlington"));
+		
+		assertFalse(d.checkCurrentPosition());
+		
+	}
+	
+	
+	
+}

@@ -22,6 +22,14 @@ public class City {
 		citySize = 0;
 	}
 	
+	public City(String name, ArrayList<GenericLocation> map, int height, int width){
+		cityName = name;
+		cityMap = map;
+		cityHeight = height;
+		cityWidth = width;
+		citySize = height * width;
+	}
+	
 	public void loadDefaultMap(){
 		
 		this.cityName = "Default";

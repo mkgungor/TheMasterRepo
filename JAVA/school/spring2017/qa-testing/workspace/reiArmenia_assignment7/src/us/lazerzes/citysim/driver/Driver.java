@@ -1,8 +1,8 @@
 package us.lazerzes.citysim.driver;
 
 import java.util.ArrayList;
-import java.util.Random;
 
+import us.lazerzes.citysim.CitySim;
 import us.lazerzes.citysim.city.City;
 import us.lazerzes.citysim.location.*;
 
@@ -18,7 +18,7 @@ public class Driver {
 		this.coffeeCount = 0;
 	}
 	
-	public void spawn(City spawnCity, Random random){
+	public void spawn(City spawnCity){
 		
 		ArrayList<GenericLocation> possible = new ArrayList<GenericLocation>();
 		
@@ -39,9 +39,10 @@ public class Driver {
 		possible.removeAll(toRemove);
 		
 		if(possible.isEmpty()){
-			System.out.println(String.format("Unable to Spawn Driver #%d, there are no valid Spawn Locations!", this.driverID));
+			System.err.println(String.format("Unable to Spawn Driver #%d, there are no valid Spawn Locations!", this.driverID));
+			System.exit(1);
 		}else{
-			int x = random.nextInt(possible.size());
+			int x = CitySim.ourRandom.getRandomNumber(possible.size());
 			this.currentLocation = possible.get(x);
 		}
 		

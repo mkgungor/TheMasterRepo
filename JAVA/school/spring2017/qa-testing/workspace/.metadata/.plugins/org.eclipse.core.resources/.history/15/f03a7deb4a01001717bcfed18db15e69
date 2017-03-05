@@ -1,0 +1,19 @@
+package us.lazerzes.citysim.util;
+
+import java.util.Date;
+import java.util.Random;
+
+public class RandGen {
+	
+	private static Random random = new Random(new Date().getTime());
+	
+	
+	public static void setSeed(int arg){
+		
+		random.setSeed((long) arg);
+		
+	}
+
+	public static void 
+	
+}

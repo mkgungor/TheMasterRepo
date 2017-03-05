@@ -1,0 +1,14 @@
+package us.lazerzes.citysim.test;
+
+import org.junit.Test;
+
+public class CitySimTest {
+
+	@Test
+	public void testDirection(){
+		
+		
+		
+	}
+	
+}

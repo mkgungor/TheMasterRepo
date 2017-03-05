@@ -2,33 +2,36 @@ package us.lazerzes.citysim;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Random;
+
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
+import org.junit.runner.notification.Failure;
 
 import us.lazerzes.citysim.city.City;
 import us.lazerzes.citysim.driver.Driver;
+import us.lazerzes.citysim.test.CitySimTest;
 import us.lazerzes.citysim.util.DisplayHelper;
 import us.lazerzes.citysim.util.IterationHelper;
+import us.lazerzes.citysim.util.RandGen;
 
 public class CitySim {
 
 	public static String gameTitle = "CitySim9003";
 	public static String author = "Rei Armenia";
 	
+	public static RandGen ourRandom = new RandGen();
+	
 	public static void main(String[] args) {
-		
-		Random random = new Random();
-		long seed = new Date().getTime();
 		
 		if(args.length > 0){
 			try{
-				seed = (long) Integer.parseInt(args[0]);
+				long seed = (long) Integer.parseInt(args[0]);
+				ourRandom.setSeed(seed);
 			}catch (NumberFormatException e){
 				System.err.println("The argument entered was not an interger! Time will be used instead!");
 			}
 		}
 		
-		random.setSeed(seed);
 		
 		System.out.println(String.format("::%s:: by %s", gameTitle, author));
 		City mainCity = new City();
@@ -41,14 +44,14 @@ public class CitySim {
 		ArrayList<Driver> drivers = new ArrayList<Driver>();
 		for(int i = 0; i < 5; i++){
 			Driver d = new Driver(i);
-			d.spawn(mainCity, random);
+			d.spawn(mainCity);
 			d.checkCurrentPosition();
 			drivers.add(d);
 		}
 		
 		for(Driver d : drivers){
 			
-			IterationHelper.iteration(d, mainCity, random);
+			IterationHelper.iteration(d, mainCity);
 			DisplayHelper.printCoffeeStatus(d);
 			System.out.println("------------------------");
 		}
@@ -59,11 +62,19 @@ public class CitySim {
 			DisplayHelper.printCoffeeStatus(d);
 		}
 		System.out.println("------------------------");
+		
+		//Tests!
+		 Result result = JUnitCore.runClasses(CitySimTest.class);
+		 for(Failure failure : result.getFailures( )) {
+			 System.out.println(failure.toString( ));
+		 }
+		 System.out.printf("All test cases passed: %b\n", result.wasSuccessful( ));   
+		
+		System.out.println("------------------------");
 		System.out.println("Press ENTER to Continue...");
 		try {
 			System.in.read();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.exit(1);
 		}

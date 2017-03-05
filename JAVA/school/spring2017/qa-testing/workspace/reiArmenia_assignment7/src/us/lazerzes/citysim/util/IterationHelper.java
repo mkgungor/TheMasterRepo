@@ -1,15 +1,15 @@
 package us.lazerzes.citysim.util;
 
 import java.util.ArrayList;
-import java.util.Random;
 
+import us.lazerzes.citysim.CitySim;
 import us.lazerzes.citysim.city.City;
 import us.lazerzes.citysim.driver.Driver;
 import us.lazerzes.citysim.location.*;
 
 public class IterationHelper {
 	
-	public static void iteration(Driver d, City city, Random random){
+	public static void iteration(Driver d, City city){
 		
 		boolean running = true;
 		
@@ -39,7 +39,7 @@ public class IterationHelper {
 				System.exit(1);
 			}
 			
-			int gen = random.nextInt(possibles.size());
+			int gen = CitySim.ourRandom.getRandomNumber(possibles.size());
 			via = possibles.get(gen);
 			
 			Direction dirMoved = DirectionHelper.directionMoved(cur, via);

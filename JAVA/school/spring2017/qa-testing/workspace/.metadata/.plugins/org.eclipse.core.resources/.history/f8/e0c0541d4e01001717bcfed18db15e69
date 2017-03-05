@@ -1,0 +1,96 @@
+package us.lazerzes.citysim.test;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+import us.lazerzes.citysim.driver.Driver;
+import us.lazerzes.citysim.location.*;
+import us.lazerzes.citysim.util.Direction;
+import us.lazerzes.citysim.util.DirectionHelper;
+
+public class CitySimTest {
+
+	@Test
+	public void testCoffee(){
+		
+		Driver d = new Driver(1);
+		d.setCurrentLocation(new LocationBuilding(1, 1, "Coffee"));
+		
+		d.checkCurrentPosition();
+		
+		assertEquals(d.getCoffeeCount(), 1);
+		
+	}
+	
+	@Test
+	public void testNotCoffee(){
+		
+		Driver d = new Driver(1);
+		d.setCurrentLocation(new LocationBuilding(1, 1, "Library"));
+		
+		d.checkCurrentPosition();
+		
+		assertEquals(d.getCoffeeCount(), 0);
+		
+	}
+	
+	@Test
+	public void testInCityLocation(){
+		Driver d = new Driver(1);
+		d.setCurrentLocation(new LocationBuilding(1, 1, "Coffee"));
+		
+		assertTrue(d.checkCurrentPosition());
+		
+	}
+	
+	@Test
+	public void testOutCityLocation(){
+		Driver d = new Driver(1);
+		d.setCurrentLocation(new LocationCityLimits(1, 1, "Burlington"));
+		
+		assertFalse(d.checkCurrentPosition());
+		
+	}
+	
+	@Test
+	public void moveToOneWayStreetLegal(){
+		
+		LocationBuilding b = new LocationBuilding(1, 1, "House");
+		LocationStreet s = new LocationStreet(2, 1, "Winooski Falls Way", true, Direction.EAST);
+		
+		assertTrue(DirectionHelper.isLegalMove(b, s));
+		
+	}
+	
+	@Test
+	public void moveToOneWayStreetIllegal(){
+		
+		LocationBuilding b = new LocationBuilding(1, 1, "House");
+		LocationStreet s = new LocationStreet(2, 1, "Winooski Falls Way", true, Direction.WEST);
+		
+		assertFalse(DirectionHelper.isLegalMove(b, s));
+		
+	}
+	
+	@Test
+	public void moveToTwoWayStreetLegal(){
+		
+		LocationBuilding b = new LocationBuilding(1, 1, "House");
+		LocationStreet s = new LocationStreet(2, 1, "Winooski Falls Way", false, Direction.WEST);
+		
+		assertTrue(DirectionHelper.isLegalMove(b, s));
+		
+	}
+	
+	@Test
+	public void moveToTwoWayStreetIllegal(){
+		
+		LocationBuilding b = new LocationBuilding(1, 1, "House");
+		LocationStreet s = new LocationStreet(1, 2, "Winooski Falls Way", false, Direction.WEST);
+		
+		assertTrue(DirectionHelper.isLegalMove(b, s));
+		
+	}
+	
+}

@@ -1,0 +1,395 @@
+package us.lazerzes.citysim.test;
+
+import static org.junit.Assert.*;
+
+import java.awt.Point;
+import java.util.ArrayList;
+
+import org.junit.Test;
+
+import static org.mockito.Mockito.*;
+
+import us.lazerzes.citysim.city.City;
+import us.lazerzes.citysim.driver.Driver;
+import us.lazerzes.citysim.location.*;
+import us.lazerzes.citysim.util.Direction;
+import us.lazerzes.citysim.util.DirectionHelper;
+import us.lazerzes.citysim.util.RandGen;
+
+public class CitySimTest {
+
+	
+	//Driver Tests
+		
+		//Coffee Tests
+	@Test
+		public void testCoffee(){ // Coffee Count ++
+		
+		Driver d = new Driver(1);
+		d.setCurrentLocation(new LocationBuilding(1, 1, "Coffee"));
+		
+		d.checkCurrentPosition();
+		
+		assertEquals(d.getCoffeeCount(), 1);
+		
+	}
+	@Test
+		public void testNotCoffee(){ // NO ACTION
+		
+		Driver d = new Driver(1);
+		d.setCurrentLocation(new LocationBuilding(1, 1, "Library"));
+		
+		d.checkCurrentPosition();
+		
+		assertEquals(d.getCoffeeCount(), 0);
+		
+	}
+	
+		//City Bounds
+	@Test
+		public void testInCityLocation(){ // CHECK CURRENT --> TRUE
+		Driver d = new Driver(1);
+		d.setCurrentLocation(new LocationBuilding(1, 1, "Coffee"));
+		
+		assertTrue(d.checkCurrentPosition());
+		
+	}
+	@Test
+		public void testOutCityLocation(){ // CHECK CURRENT --> FALSE
+		Driver d = new Driver(1);
+		d.setCurrentLocation(new LocationCityLimits(1, 1, "Burlington"));
+		
+		assertFalse(d.checkCurrentPosition());
+		
+	}
+		
+		//General Tests
+	@Test
+		public void testDriverID(){// Tests Driver ID
+
+		Driver d = new Driver(1);
+		assertEquals(d.getDriverID(), 1);
+	}
+
+	
+	//DirectionHelper Tests
+	
+		//Tests Move Legal
+	@Test
+		public void moveToOneWayStreetLegal(){ // Move to 1 WAY Street --> TRUE
+		
+		LocationBuilding b = new LocationBuilding(1, 1, "House");
+		LocationStreet s = new LocationStreet(2, 1, "Winooski Falls Way", true, Direction.EAST);
+		
+		assertTrue(DirectionHelper.isLegalMove(b, s));
+		
+	}
+	@Test
+		public void moveToOneWayStreetIllegal(){ // Move to 1 WAY Street --> FALSE
+		
+			LocationBuilding b = new LocationBuilding(1, 1, "House");
+			LocationStreet s = new LocationStreet(2, 1, "Winooski Falls Way", true, Direction.WEST);
+		
+			assertFalse(DirectionHelper.isLegalMove(b, s));
+		
+	}
+	@Test
+		public void moveToTwoWayStreetLegal(){ // Move to 2 WAY Street --> TRUE
+		
+		LocationBuilding b = new LocationBuilding(1, 1, "House");
+		LocationStreet s = new LocationStreet(2, 1, "Winooski Falls Way", false, Direction.WEST);
+		
+		assertTrue(DirectionHelper.isLegalMove(b, s));
+		
+	}
+	@Test
+		public void moveToTwoWayStreetIllegal(){ // Move to 2 WAY Street --> TRUE
+		
+		LocationBuilding b = new LocationBuilding(1, 1, "House");
+		LocationStreet s = new LocationStreet(1, 2, "Winooski Falls Way", false, Direction.WEST);
+		
+		assertTrue(DirectionHelper.isLegalMove(b, s));
+		
+	}
+	@Test
+		public void moveToBuildingIllegal(){ // Move to Building --> False
+		
+		LocationBuilding b1 = new LocationBuilding(1, 1, "Place");
+		LocationBuilding b2 = new LocationBuilding(1, 2, "House");
+		
+		assertFalse(DirectionHelper.isLegalMove(b1, b2));
+		
+	}
+	@Test
+		public void moveToCityLimitsIllegal(){ // Move to CityLimits --> False
+		
+		LocationBuilding b = new LocationBuilding(1, 1, "House");
+		LocationCityLimits c = new LocationCityLimits(1, 2, "Winooski");
+		
+		assertFalse(DirectionHelper.isLegalMove(b, c));
+		
+	}
+	
+		//Get Surrounding Tests
+		@Test
+		public void getSurrValid(){ // Surrounding with valid result
+			
+			GenericLocation curr = new GenericLocation(1,1);
+			ArrayList<GenericLocation> map = new ArrayList<GenericLocation>();
+		
+			map.add(new GenericLocation(0, 0));
+			map.add(new GenericLocation(1, 0));
+			map.add(new GenericLocation(2, 0));
+			map.add(new GenericLocation(0, 1));
+			map.add(curr);
+			map.add(new GenericLocation(2, 1));
+			map.add(new GenericLocation(0, 2));
+			map.add(new GenericLocation(1, 2));
+			map.add(new GenericLocation(2, 2));
+			
+			ArrayList<GenericLocation> expected = new ArrayList<GenericLocation>();
+			expected.add(new GenericLocation(1, 0));
+			expected.add(new GenericLocation(0, 1));
+			expected.add(new GenericLocation(2, 1));
+			expected.add(new GenericLocation(1, 2));
+			
+			City testCity = new City("test", map, 3, 3);
+			
+			assertTrue(expected.equals(DirectionHelper.getSurrounding(curr, testCity)));
+			
+		}
+		@Test
+		public void getSurrInvalid(){ // Surrounding with null result
+			GenericLocation curr = new GenericLocation(1,1);
+			ArrayList<GenericLocation> map = new ArrayList<GenericLocation>();
+		
+			map.add(new GenericLocation(12, 12));
+			map.add(new GenericLocation(13, 12));
+			map.add(new GenericLocation(14, 12));
+			map.add(new GenericLocation(12 , 13));
+			map.add(curr);
+			map.add(new GenericLocation(13, 13));
+			map.add(new GenericLocation(12, 14));
+			map.add(new GenericLocation(13, 14));
+			map.add(new GenericLocation(14, 14));
+			
+			City testCity = new City("test", map, 3, 3);
+			
+			assertTrue(DirectionHelper.getSurrounding(curr, testCity).equals(null));
+		}
+		
+		//DirMoved Tests
+		@Test
+		public void dirMovedEast(){ // DirMoved --> EAST
+			
+			GenericLocation l1 = new GenericLocation(1, 1);
+			GenericLocation l2 = new GenericLocation(2, 1);
+			
+			assertEquals(DirectionHelper.directionMoved(l1, l2), Direction.EAST);
+			
+		}
+		@Test
+		public void dirMovedWest(){ // DirMoved --> WEST
+			
+			GenericLocation l1 = new GenericLocation(1, 1);
+			GenericLocation l2 = new GenericLocation(0, 1);
+			
+			assertEquals(DirectionHelper.directionMoved(l1, l2), Direction.WEST);
+			
+		}
+		@Test
+		public void dirMovedNorth(){ // DirMoved --> NORTH
+			
+			GenericLocation l1 = new GenericLocation(1, 1);
+			GenericLocation l2 = new GenericLocation(1, 0);
+			
+			assertEquals(DirectionHelper.directionMoved(l1, l2), Direction.NORTH);
+			
+		}
+		@Test
+		public void dirMovedSoth(){ // DirMoved --> SOUTH
+			
+			GenericLocation l1 = new GenericLocation(1, 1);
+			GenericLocation l2 = new GenericLocation(1, 2);
+			
+			assertEquals(DirectionHelper.directionMoved(l1, l2), Direction.SOUTH);
+			
+		}
+
+		//Random Number Generator
+	@Test
+		public void getValueFromRandGen(){ // Random Number Generation General Case
+
+		RandGen ren = mock(RandGen.class);		
+		when(ren.getRandomNumber(4)).thenReturn(1);
+		
+		assertEquals(ren.getRandomNumber(4), 1);
+			
+	}	
+	@Test
+		public void getVal0fromArray(){ // Random Number Generation --> Getting Value 0 from an Array List
+		
+		RandGen ren = mock(RandGen.class);		
+		when(ren.getRandomNumber(4)).thenReturn(0);
+		
+		ArrayList<Integer> test = new ArrayList<Integer>();
+		
+		test.add(1);
+		test.add(2);
+		test.add(3);
+		test.add(4);
+		
+		assertEquals(test.get(ren.getRandomNumber(test.size())), test.get(0));
+		
+	}
+	@Test
+		public void getVal1fromArray(){ // Random Number Generation --> Getting Value 1 from an Array List
+	
+	RandGen ren = mock(RandGen.class);		
+	when(ren.getRandomNumber(4)).thenReturn(1);
+	
+	ArrayList<Integer> test = new ArrayList<Integer>();
+	
+	test.add(1);
+	test.add(2);
+	test.add(3);
+	test.add(4);
+	
+	assertEquals(test.get(ren.getRandomNumber(test.size())), test.get(1));
+	
+}
+	
+	
+	//City Tests
+		
+		//General Tests
+		@Test
+		public void getName(){
+			ArrayList<GenericLocation> map = new ArrayList<GenericLocation>();
+			
+			map.add(new GenericLocation(0, 0));
+			map.add(new GenericLocation(1, 0));
+			map.add(new GenericLocation(2, 0));
+			map.add(new GenericLocation(0, 1));
+			map.add(new GenericLocation(1, 1));
+			map.add(new GenericLocation(2, 1));
+			map.add(new GenericLocation(0, 2));
+			map.add(new GenericLocation(1, 2));
+			map.add(new GenericLocation(2, 2));
+			
+			City testCity = new City("test", map, 3, 3);
+			
+			assertTrue(testCity.getCityName().equals("test"));
+		}
+		@Test
+		public void getHeight(){
+			ArrayList<GenericLocation> map = new ArrayList<GenericLocation>();
+			
+			map.add(new GenericLocation(0, 0));
+			map.add(new GenericLocation(1, 0));
+			map.add(new GenericLocation(2, 0));
+			map.add(new GenericLocation(0, 1));
+			map.add(new GenericLocation(1, 1));
+			map.add(new GenericLocation(2, 1));
+			map.add(new GenericLocation(0, 2));
+			map.add(new GenericLocation(1, 2));
+			map.add(new GenericLocation(2, 2));
+			
+			City testCity = new City("test", map, 3, 3);
+			
+			assertEquals(testCity.getCityHeight(), 3);
+		}
+		@Test
+		public void getWidth(){
+			ArrayList<GenericLocation> map = new ArrayList<GenericLocation>();
+			
+			map.add(new GenericLocation(0, 0));
+			map.add(new GenericLocation(1, 0));
+			map.add(new GenericLocation(2, 0));
+			map.add(new GenericLocation(0, 1));
+			map.add(new GenericLocation(1, 1));
+			map.add(new GenericLocation(2, 1));
+			map.add(new GenericLocation(0, 2));
+			map.add(new GenericLocation(1, 2));
+			map.add(new GenericLocation(2, 2));
+			
+			City testCity = new City("test", map, 3, 3);
+			
+			assertEquals(testCity.getCityWidth(), 3);
+		}
+		@Test
+		public void getSize(){
+			ArrayList<GenericLocation> map = new ArrayList<GenericLocation>();
+			
+			map.add(new GenericLocation(0, 0));
+			map.add(new GenericLocation(1, 0));
+			map.add(new GenericLocation(2, 0));
+			map.add(new GenericLocation(0, 1));
+			map.add(new GenericLocation(1, 1));
+			map.add(new GenericLocation(2, 1));
+			map.add(new GenericLocation(0, 2));
+			map.add(new GenericLocation(1, 2));
+			map.add(new GenericLocation(2, 2));
+			
+			City testCity = new City("test", map, 3, 3);
+			
+			assertEquals(testCity.getCitySize(), 9);
+		}
+		
+		//Location Grabber Tests
+		@Test
+		public void getLocationWithPoint(){
+			ArrayList<GenericLocation> map = new ArrayList<GenericLocation>();
+			
+			map.add(new GenericLocation(0, 0));
+			map.add(new GenericLocation(1, 0));
+			map.add(new GenericLocation(2, 0));
+			map.add(new GenericLocation(0, 1));
+			map.add(new GenericLocation(1, 1));
+			map.add(new GenericLocation(2, 1));
+			map.add(new GenericLocation(0, 2));
+			map.add(new GenericLocation(1, 2));
+			map.add(new GenericLocation(2, 2));
+			
+			City testCity = new City("test", map, 3, 3);
+			
+			assertEquals(testCity.getLocationAt(new Point(1, 1)), map.get(4));
+			
+		}
+		@Test
+		public void getLocationWithXY(){
+			ArrayList<GenericLocation> map = new ArrayList<GenericLocation>();
+			
+			map.add(new GenericLocation(0, 0));
+			map.add(new GenericLocation(1, 0));
+			map.add(new GenericLocation(2, 0));
+			map.add(new GenericLocation(0, 1));
+			map.add(new GenericLocation(1, 1));
+			map.add(new GenericLocation(2, 1));
+			map.add(new GenericLocation(0, 2));
+			map.add(new GenericLocation(1, 2));
+			map.add(new GenericLocation(2, 2));
+			
+			City testCity = new City("test", map, 3, 3);
+			
+			assertEquals(testCity.getLocationAt(1, 1), map.get(4));
+		}
+		@Test
+		public void getLocationWithIndex(){
+			ArrayList<GenericLocation> map = new ArrayList<GenericLocation>();
+			
+			map.add(new GenericLocation(0, 0));
+			map.add(new GenericLocation(1, 0));
+			map.add(new GenericLocation(2, 0));
+			map.add(new GenericLocation(0, 1));
+			map.add(new GenericLocation(1, 1));
+			map.add(new GenericLocation(2, 1));
+			map.add(new GenericLocation(0, 2));
+			map.add(new GenericLocation(1, 2));
+			map.add(new GenericLocation(2, 2));
+			
+			City testCity = new City("test", map, 3, 3);
+			
+			assertEquals(testCity.getLocationAt(4), map.get(4));
+		}
+}

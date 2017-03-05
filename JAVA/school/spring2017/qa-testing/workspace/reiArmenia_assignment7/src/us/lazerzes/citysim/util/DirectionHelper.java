@@ -31,7 +31,7 @@ public class DirectionHelper {
 		}
 		
 		
-		if(surrounding.size() == 0){
+		if(surrounding.isEmpty()){
 			return null;
 		}
 		
