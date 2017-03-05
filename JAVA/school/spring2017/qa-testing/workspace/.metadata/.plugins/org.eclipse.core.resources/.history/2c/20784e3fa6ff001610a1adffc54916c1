@@ -1,0 +1,59 @@
+package us.lazerzes.citysim;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Random;
+
+import us.lazerzes.citysim.city.City;
+import us.lazerzes.citysim.driver.Driver;
+import us.lazerzes.citysim.util.DisplayHelper;
+import us.lazerzes.citysim.util.IterationHelper;
+
+public class CitySim {
+
+	public static String gameTitle = "CitySim9003";
+	public static String author = "Rei Armenia";
+	
+	public static void main(String[] args) {
+		
+		Random random = new Random();
+		
+		System.out.println(String.format("::%s:: by %s", gameTitle, author));
+		City mainCity = new City();
+		
+		mainCity.loadDefaultMap();
+		System.out.println(String.format("City :: %s has Finished Loading!", mainCity.getCityName()));
+		
+		ArrayList<Driver> drivers = new ArrayList<Driver>();
+		for(int i = 0; i < 5; i++){
+			Driver d = new Driver(i);
+			d.spawn(mainCity, random);
+			d.checkCurrentPosition();
+			drivers.add(d);
+		}
+		
+		DisplayHelper.printCoffeeStatus(drivers);
+		
+		boolean running = true;
+		
+		while(running){
+			
+			running = IterationHelper.iteration(drivers, mainCity, random);
+			
+			if(running){
+				IterationHelper.checks(drivers);
+			}
+			
+		}
+		
+		System.out.println("Press ENTER to Continue...");
+		try {
+			System.in.read();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+}

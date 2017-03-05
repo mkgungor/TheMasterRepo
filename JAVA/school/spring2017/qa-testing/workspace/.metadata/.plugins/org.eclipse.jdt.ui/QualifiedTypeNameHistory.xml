@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="us.lazerzes.citysim.util.Directions"/>
+<fullyQualifiedTypeName name="us.lazerzes.citysim.location.Street"/>
+<fullyQualifiedTypeName name="us.lazerzes.citysim.location.Location"/>
+<fullyQualifiedTypeName name="us.lazerzes.citysim.location.Building"/>
+<fullyQualifiedTypeName name="us.lazerzes.citysim.location.CityLimits"/>
+<fullyQualifiedTypeName name="us.lazerzes.citysim.util.DirHelper"/>
+<fullyQualifiedTypeName name="us.lazerzes.citysim.CitySim9003"/>
+<fullyQualifiedTypeName name="java.awt.Point"/>
+<fullyQualifiedTypeName name="us.lazerzes.citysim.util.Direction"/>
+<fullyQualifiedTypeName name="us.lazerzes.citysim.util.IterationHelper"/>
+<fullyQualifiedTypeName name="us.lazerzes.citysim.driver.Driver"/>
+<fullyQualifiedTypeName name="us.lazerzes.citysim.city.City"/>
+<fullyQualifiedTypeName name="java.util.Random"/>
+<fullyQualifiedTypeName name="us.lazerzes.citysim.location.GenericLocation"/>
+<fullyQualifiedTypeName name="java.util.Iterator"/>
+<fullyQualifiedTypeName name="java.util.Date"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
+</qualifiedTypeNameHistroy>

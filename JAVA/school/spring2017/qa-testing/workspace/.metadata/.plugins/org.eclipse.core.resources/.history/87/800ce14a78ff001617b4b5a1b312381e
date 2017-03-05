@@ -1,0 +1,92 @@
+package us.lazerzes.citysim.city;
+
+import java.awt.Point;
+import java.util.ArrayList;
+
+import us.lazerzes.citysim.location.*;
+import us.lazerzes.citysim.util.Direction;
+
+public class City {
+
+	protected String cityName;
+	protected ArrayList<GenericLocation> cityMap;
+	
+	public City(){
+		cityName = "";
+		cityMap = new ArrayList<GenericLocation>();
+	}
+	
+	public void loadDefaultMap(){
+		
+		this.cityName = "Default";
+		
+		System.out.print(String.format("Loading City :: %s...", this.getCityName()));
+		
+		for(int y = 0; y < 3; y++){
+			for(int x = 0; x < 7; x++){
+				
+				if(x == 0 && y == 0){
+					cityMap.add(new LocationCityLimits(x, y, "INVALID"));
+				}else if(x == 1 && y == 0){
+					cityMap.add(new LocationStreet(x, y, "Fourth Ave.", true, Direction.EAST));
+				}else if(x == 2 && y == 0){
+					cityMap.add(new LocationBuilding(x, y, "Hotel"));
+				}else if(x == 3 && y == 0){
+					cityMap.add(new LocationStreet(x, y, "Fourth Ave.", true, Direction.EAST));
+				}else if(x == 4 && y == 0){
+					cityMap.add(new LocationBuilding(x, y, "Diner"));
+				}else if(x == 5 && y == 0){
+					cityMap.add(new LocationStreet(x, y, "Fourth Ave.", true, Direction.EAST));
+				}else if(x == 6 && y == 0){
+					cityMap.add(new LocationCityLimits(x, y, "Philadelphia"));
+				}else if(x == 2 && y == 1){
+					cityMap.add(new LocationStreet(x, y, "Bill St.", false, Direction.NORTH));
+				}else if(x == 4 && y == 1){
+					cityMap.add(new LocationStreet(x, y, "Phil St.", false, Direction.NORTH));
+				}else if(x == 0 && y == 2){
+					cityMap.add(new LocationCityLimits(x, y, "Cleveland"));
+				}else if(x == 1 && y == 2){
+					cityMap.add(new LocationStreet(x, y, "Fifth Ave.", true, Direction.WEST));
+				}else if(x == 2 && y == 2){
+					cityMap.add(new LocationBuilding(x, y, "Library"));
+				}else if(x == 3 && y == 2){
+					cityMap.add(new LocationStreet(x, y, "Fifth Ave.", true, Direction.WEST));
+				}else if(x == 4 && y == 2){
+					cityMap.add(new LocationBuilding(x, y, "Coffee"));
+				}else if(x == 5 && y == 2){
+					cityMap.add(new LocationStreet(x, y, "Fifth Ave.", true, Direction.WEST));
+				}else if(x == 6 && y == 2){
+					cityMap.add(new LocationCityLimits(x, y, "INVALID"));
+				}else{
+					cityMap.add(new GenericLocation(x, y));
+				}
+			}
+		}
+	}
+	
+	public String getCityName(){
+		return new String(this.cityName);
+	}
+	
+	public GenericLocation getLocationAt(int x, int y){
+		
+		Point point = new Point(x, y);
+		return getLocationAt(point);
+		
+	}
+
+	private GenericLocation getLocationAt(Point point) {
+		
+		if(!cityMap.equals(null)){
+			for(GenericLocation genLoc : cityMap){
+				if(genLoc.getPosition().equals(point)){
+					return genLoc.clone();
+				}
+			}
+		}
+		
+		return null;
+		
+	}
+	
+}
